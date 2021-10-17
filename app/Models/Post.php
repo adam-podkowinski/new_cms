@@ -27,6 +27,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|Post whereIsAdmin($value)
  * @method static Builder|Post whereTitle($value)
  * @method static Builder|Post whereUpdatedAt($value)
+ * @property int $user_id
+ * @property Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Query\Builder|Post onlyTrashed()
+ * @method static Builder|Post whereDeletedAt($value)
+ * @method static Builder|Post whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|Post withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Post withoutTrashed()
+ * @property-read User $user
  */
 class Post extends Model
 {
@@ -35,5 +43,10 @@ class Post extends Model
 
     protected $date = ['deleted_at'];
     protected $fillable = ['title', 'content', 'is_admin'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
 

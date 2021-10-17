@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -58,7 +59,7 @@ Route::get('/find', function () {
 });
 
 Route::get('/findwhere', function () {
-    $post = Post::query()->where('title', 'PHP with Laravel')->orderBy('id', 'asc')->get();
+    $post = Post::query()->where('title', 'new title')->orderBy('id', 'asc')->get();
 
     return response()->json($post);
 });
@@ -124,3 +125,31 @@ Route::get('/forcedelete', function () {
     Post::onlyTrashed()->where('is_admin', 0)->forceDelete();
 });
 
+/*
+ * ELOQUENT RELATIONSHIPS
+ */
+
+// One to one relationship
+Route::get('/user/{id}/post', function ($id) {
+    return User::whereId($id)->firstOrFail()->post;
+});
+
+Route::get('/post/{id}/user', function ($id) {
+    return Post::whereId($id)->firstOrFail()->user->name;
+});
+
+// One to many relationship
+Route::get('/posts', function () {
+    return User::whereId(1)->firstOrFail()->posts;
+});
+
+Route::get('/user/{id}/roles', function ($id) {
+    $return = [];
+    $userRoles = User::whereId($id)->firstOrFail()->roles;
+
+    foreach ($userRoles as $role) {
+        array_push($return, $role['name']);
+    }
+
+    return $return;
+});
