@@ -52,7 +52,7 @@ Route::get('/findAll', function () {
 });
 
 Route::get('/find', function () {
-    $post = Post::whereId(2)->get();
+    $post = Post::whereId(2)->first();
 
     return response()->json($post);
 });
@@ -111,11 +111,16 @@ Route::get('/softdelete', function () {
 });
 
 Route::get('/readsoftdeleted', function () {
-// WRONG
-//    $post = Post::query()->find(1);
     $post = Post::withTrashed()->where('id', 1)->get();
-
-    $user = new \App\Models\User();
 
     return response()->json($post);
 });
+
+Route::get('/restore', function () {
+    Post::withTrashed()->where('is_admin', 0)->restore();
+});
+
+Route::get('/forcedelete', function () {
+    Post::onlyTrashed()->where('is_admin', 0)->forceDelete();
+});
+
