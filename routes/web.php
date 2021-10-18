@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -149,6 +150,21 @@ Route::get('/user/{id}/roles', function ($id) {
 
     foreach ($userRoles as $role) {
         array_push($return, $role['name']);
+    }
+
+    return $return;
+});
+
+Route::get('/roles/{id}', function ($id) {
+    return Role::whereId($id)->firstOrFail()->users;
+});
+
+Route::get('user/pivot', function () {
+    $user = User::whereId(1)->firstOrFail();
+    $return = [];
+
+    foreach ($user->roles as $role) {
+        array_push($return, $role->pivot);
     }
 
     return $return;

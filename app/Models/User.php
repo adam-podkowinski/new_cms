@@ -47,6 +47,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property-read Post|null $post
  * @property-read Collection|Role[] $roles
  * @property-read int|null $roles_count
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
@@ -94,6 +95,6 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->withPivot('created_at');
     }
 }
