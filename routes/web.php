@@ -4,6 +4,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Hamcrest\Core\IsTypeOf;
 
 Route::get('/', function () {
     return view('welcome');
@@ -139,8 +140,8 @@ Route::get('/post/{id}/user', function ($id) {
 });
 
 // One to many relationship
-Route::get('/posts', function () {
-    return User::whereId(1)->firstOrFail()->posts;
+Route::get('/user/{id}/posts', function ($id) {
+    return User::whereId($id)->firstOrFail()->posts;
 });
 
 Route::get('/user/{id}/roles', function ($id) {
