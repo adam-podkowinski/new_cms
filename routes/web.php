@@ -1,8 +1,12 @@
 <?php
 
+use App\Models\Country;
+use App\Models\Photo;
 use App\Models\Post;
 use App\Models\Role;
+use App\Models\Tag;
 use App\Models\User;
+use App\Models\Video;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -66,7 +70,7 @@ Route::get('/findwhere', function () {
 });
 
 Route::get('/basicinsert', function () {
-    $post = new Post;
+    $post = new Post();
     $post->title = 'new title';
     $post->content = 'new content';
     $post->save();
@@ -159,7 +163,7 @@ Route::get('/roles/{id}', function ($id) {
     return Role::whereId($id)->firstOrFail()->users;
 });
 
-Route::get('user/pivot', function () {
+Route::get('/user/pivot', function () {
     $user = User::whereId(1)->firstOrFail();
     $return = [];
 
@@ -168,4 +172,88 @@ Route::get('user/pivot', function () {
     }
 
     return $return;
+});
+
+Route::get('/user/{id}/country', function ($id) {
+    return User::whereId($id)->firstOrFail()->country;
+});
+
+Route::get('/posts/{id}', function ($id) {
+    return Country::whereId($id)->firstOrFail()->posts;
+});
+
+Route::get('/country/{id}/user', function ($id) {
+    $country = Country::whereId($id)->firstOrFail();
+    $return = [];
+
+    foreach ($country->posts as $post) {
+        array_push($return, $post);
+    }
+
+    return $return;
+});
+
+Route::get('/user/{id}/photos', function ($id) {
+    $user = User::whereId($id)->firstOrFail();
+    $return = [];
+
+    foreach ($user->photos as $photo) {
+        array_push($return, $photo);
+    }
+
+    if (empty($return)) {
+        return response()->json(['error' => 'not found'], 404);
+    } else {
+        return $return;
+    }
+});
+
+Route::get('/photo/{id}/imageable', function ($id) {
+    $photo = Photo::whereId($id)->firstOrFail();
+    return $imageable = $photo->imageable;
+});
+
+Route::get('/post/{id}/tag', function ($id) {
+    $post = Post::whereId($id)->firstOrFail();
+    $return = [];
+
+    foreach ($post->tags as $tag) {
+        array_push($return, $tag);
+    }
+
+    if (empty($return)) {
+        return response()->json(['error' => 'not found'], 404);
+    } else {
+        return $return;
+    }
+});
+
+Route::get('/tag/{id}/posts', function ($id) {
+    $tag = Tag::whereId($id)->firstOrFail();
+    $return = [];
+
+    foreach ($tag->posts as $tag) {
+        array_push($return, $tag);
+    }
+
+    if (empty($return)) {
+        return response()->json(['error' => 'not found'], 404);
+    } else {
+        return $return;
+    }
+});
+
+Route::get('/tag/{id}/videos', function ($id) {
+    $tag = Tag::whereId($id)->firstOrFail();
+    $return = [];
+
+    foreach ($tag->videos as $tag) {
+        array_push($return, $tag);
+    }
+
+    if (empty($return)) {
+        return response()->json(['error' => 'not found'], 404);
+    } else {
+        return $return;
+    }
 });

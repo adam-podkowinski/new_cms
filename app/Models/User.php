@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -26,14 +26,24 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int $country_id
+ * @property-read Country $country
  * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection|Photo[] $photos
+ * @property-read int|null $photos_count
+ * @property-read Post|null $post
+ * @property-read Collection|Post[] $posts
+ * @property-read int|null $posts_count
+ * @property-read Collection|Role[] $roles
+ * @property-read int|null $roles_count
  * @property-read Collection|PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
+ * @method static Builder|User whereCountryId($value)
  * @method static Builder|User whereCreatedAt($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereEmailVerifiedAt($value)
@@ -42,12 +52,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereUpdatedAt($value)
- * @property-read Post|null $posts
- * @property-read int|null $posts_count
- * @property-read Post|null $post
- * @property-read Collection|Role[] $roles
- * @property-read int|null $roles_count
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class User extends Authenticatable
 {
@@ -96,5 +101,15 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class)->withPivot('created_at');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    public function photos()
+    {
+        return $this->morphMany(Photo::class, 'imageable');
     }
 }
